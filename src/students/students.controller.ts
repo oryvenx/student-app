@@ -21,6 +21,8 @@ export class StudentsController {
 
     @Post()
     create(@Body() body: CreateStudentDto) {
+        console.log(typeof body)
+        console.log(body instanceof CreateStudentDto)
         return this.studentService.create(body)
     }
 
