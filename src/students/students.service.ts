@@ -1,8 +1,15 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Student } from './entities/student.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class StudentsService {
+    constructor(
+        @InjectRepository(Student)
+        private readonly studentRepository: Repository<Student>,
+    ) {}
+    
     private students: Student[] = [
         {
             id: 1,
