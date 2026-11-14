@@ -1,30 +1,27 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as joi from 'joi';
 import { CoursesModule } from './courses/courses.module';
 import { StudentsModule } from './students/students.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      validationSchema: joi.object({
-        DATABASE_HOST: joi.required(),
-        DATABASE_PORT: joi.required().default(5432),
-      })
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DATABASE_HOST'),
+        port: Number(config.get('DATABASE_PORT')),
+        username: config.get<string>('DATABASE_USERNAME'),
+        password: String(config.get('DATABASE_PASSWORD')),
+        database: config.get<string>('DATABASE_DATABASE'),
+        autoLoadEntities: true,
+        synchronize: config.get('NODE_ENV') === 'development',
+      }),
     }),
-    StudentsModule, 
-    TypeOrmModule.forRoot({
-    type: 'postgres',
-    host: process.env.DATABASE_HOST,
-    port: +process.env.DATABASE_PORT!,
-    username: process.env.DATABASE_USERNAME,
-    password: process.env.DATABASE_PASSWORD,
-    database: process.env.DATABASE_DATABASE,
-    autoLoadEntities: true
-    }), 
-    CoursesModule],
-  controllers: [],
-  providers: [],
+    StudentsModule,
+    CoursesModule,
+  ],
 })
 export class AppModule {}
