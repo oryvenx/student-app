@@ -9,6 +9,18 @@ export class Course {
     @Column()
     name: string
 
+    @Column({unique: true})
+    code: string
+        
+    @Column()
+    description: string
+        
+    @Column()
+    department: string
+        
+    @Column()
+    credits: number
+
     @ManyToMany((type) => Student, (student) => student.courses)
     students: Student[]
 

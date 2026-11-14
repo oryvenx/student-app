@@ -11,8 +11,10 @@ async function bootstrap() {
     //Whitelist the non listed element and stop the data
     forbidNonWhitelisted: true,
     transform: true,
+    transformOptions: {
+      enableImplicitConversion: true
+    }
   }))
-
   await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
